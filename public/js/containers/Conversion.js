@@ -3,6 +3,7 @@ import axios from 'axios';
 import debounce from 'lodash.debounce';
 import {connect} from 'react-redux';
 import FeesTable from "../components/FeesTable";
+import * as actions from '../actions/actions';
 
 class Conversion extends React.Component {
     constructor(props) {
@@ -104,7 +105,7 @@ class Conversion extends React.Component {
         newAmount = newAmount.replace(',','')
 
         // optimistic field updates
-        this.props.dispatch({type: 'CHANGE_ORIGIN_AMOUNT', data: {newAmount: newAmount}});
+        this.props.dispatch(actions.changeOriginAmount(newAmount));
 
         this.props.dispatch((dispatch) => {
             var payload = {
