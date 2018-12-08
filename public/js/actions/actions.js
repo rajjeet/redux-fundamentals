@@ -1,11 +1,14 @@
 import axios from "axios";
 import debounce from 'lodash.debounce';
+import {ActionTypes} from './actionTypes';
 
 export function changeOriginAmount(newAmount) {
     return {
-        type: 'CHANGE_ORIGIN_AMOUNT', data: {newAmount: newAmount}
+        type: ActionTypes.CHANGE_ORIGIN_AMOUNT,
+        data: {newAmount: newAmount}
     };
 }
+
 export function fetchConversionRate(payload) {
     return (dispatch) => {
         makeConversionAjaxCall(dispatch, payload);

@@ -237,12 +237,13 @@ class Conversion extends React.Component {
 }
 
 const mapStateToProps = (state, props) => {
+    const {amount} = state;
     return {
-        originAmount: state.originAmount,
-        destinationAmount: state.destinationAmount,
-        conversionRate: state.conversionRate,
-        feeAmount: state.feeAmount,
-        totalCost: state.totalCost
+        originAmount: amount.originAmount,
+        destinationAmount: amount.destinationAmount,
+        conversionRate: amount.conversionRate,
+        feeAmount: amount.feeAmount,
+        totalCost: amount.totalCost
     };
 };
 
