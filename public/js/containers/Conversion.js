@@ -131,19 +131,14 @@ class Conversion extends React.Component {
         this.props.dispatch(actions.fetchConversionRate(payload));
 
         // get the new fee & total amount
-        this.makeFeeAjaxCall({
+        let feePayload = {
             originAmount: newAmount,
             originCurrency: this.state.originCurrency,
             destCurrency: this.state.destinationCurrency
 
-         }, (resp) => {
-            this.setState({
-                feeAmount: resp.feeAmount
-            })
+        };
 
-            this.calcNewTotal();
-        });
-
+        this.props.dispatch(actions.fetchFees(feePayload));
 
     }
 
@@ -233,8 +228,8 @@ class Conversion extends React.Component {
                     originCurrency={this.state.originCurrency}
                     destinationCurrency={this.state.destinationCurrency}
                     conversionRate={this.props.conversionRate}
-                    fee={this.state.feeAmount}
-                    total={this.state.totalCost}
+                    fee={this.props.feeAmount}
+                    total={this.props.totalCost}
                 />
             </div>
         )
@@ -245,7 +240,9 @@ const mapStateToProps = (state, props) => {
     return {
         originAmount: state.originAmount,
         destinationAmount: state.destinationAmount,
-        conversionRate: state.conversionRate
+        conversionRate: state.conversionRate,
+        feeAmount: state.feeAmount,
+        totalCost: state.totalCost
     };
 };
 

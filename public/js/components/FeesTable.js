@@ -20,7 +20,7 @@ const FeesTable = ({conversionRate, fee, total, originCurrency, destinationCurre
             </tbody>
         </table>
     </div>
-);
+)
 
 FeesTable.propTypes = {
     conversionRate: PropTypes.number.isRequired,
