@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 import {connect} from 'react-redux';
-import FeesTable from "./FeesTable";
+import FeesTable from "../components/FeesTable";
 
 class Conversion extends React.Component {
     constructor(props) {
