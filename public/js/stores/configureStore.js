@@ -2,7 +2,7 @@ import {applyMiddleware, createStore} from "redux";
 import {createLogger} from 'redux-logger';
 import thunk from 'redux-thunk';
 
-var defaultState = {
+let defaultState = {
     originAmount: '100',
     destinationAmount: '0.00',
     conversionRate: 1,
@@ -11,33 +11,33 @@ var defaultState = {
 };
 
 function amount(state = defaultState, action) {
-    if (action.type === 'CHANGE_ORIGIN_AMOUNT') {
-        // return Object.assign({}, state, {originAmount: action.data})
-        return {...state, originAmount: action.data.newAmount}
-    } else if (action.type === 'RECEIVED_CONVERSION_RATE_SUCCESS') {
-        return {
-            ...state,
-            conversionRate: action.data.xRate,
-            destinationAmount: action.data.destAmount
-        }
-    } else if (action.type === 'RECEIVED_FEES_SUCCESS') {
-        const newTotal = parseFloat(state.originAmount) + parseFloat(action.data.feeAmount);
+    switch(action.type){
+        case ('CHANGE_ORIGIN_AMOUNT'):
+            return {...state, originAmount: action.data.newAmount};
+        case ('RECEIVED_CONVERSION_RATE_SUCCESS'):
+            return {
+                ...state,
+                conversionRate: action.data.xRate,
+                destinationAmount: action.data.destAmount
+            };
+        case ('RECEIVED_FEES_SUCCESS'):
+            const newTotal = parseFloat(state.originAmount) + parseFloat(action.data.feeAmount);
 
-        return {
-            ...state,
-            feeAmount: action.data.feeAmount,
-            totalCost: newTotal
-        }
+            return {
+                ...state,
+                feeAmount: action.data.feeAmount,
+                totalCost: newTotal
+            };
+        default:
+            return state;
     }
-
-    return state;
 }
 
 
-var logger = createLogger({
+const logger = createLogger({
     collapsed: true
 });
 
-var store = createStore(amount, applyMiddleware(thunk, logger));
+const store = createStore(amount, applyMiddleware(thunk, logger));
 
 export default store;
