@@ -1,5 +1,5 @@
 import {createStore, applyMiddleware} from "redux";
-import logger from 'redux-logger';
+import {createLogger} from 'redux-logger';
 import thunk from 'redux-thunk';
 
 var defaultState = {
@@ -13,6 +13,11 @@ function amount(state = defaultState, action) {
     }
     return state;
 }
+
+
+var logger = createLogger({
+    collapsed: true
+});
 
 var store = createStore(amount, applyMiddleware(thunk, logger));
 
