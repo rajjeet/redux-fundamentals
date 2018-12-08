@@ -2,6 +2,33 @@ import React from 'react';
 import PropTypes from 'prop-types'
 import axios from 'axios';
 import debounce from 'lodash.debounce';
+import {createStore} from "redux";
+
+var defaultState = {
+    originAmount: 0.00
+};
+
+function amount(state = defaultState, action) {
+    if (action.type === 'INCREMENT'){
+        // return Object.assign({}, state, {originAmount: action.data})
+        return {...state, originAmount: action.data}
+    }
+    return state;
+}
+
+var store = createStore(amount);
+
+store.subscribe(function () {
+    console.log('state', store.getState());
+});
+
+store.dispatch({type: 'INCREMENT', data: '300.45'});
+store.dispatch({type: ''});
+store.dispatch({type: ''});
+
+
+
+
 
 class FeesTable extends React.Component {
     render() {

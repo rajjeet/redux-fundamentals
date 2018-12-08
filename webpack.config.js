@@ -13,9 +13,10 @@ module.exports = {
 		test: /\.js$/, //transform all .js files
 		exclude: /node_modules/, // except for node_modules
 		loader: 'babel-loader', // apply the babel-loader to compile the files
-		query: {
-		    presets: ['react', 'es2015'] // load the react, es2015 babel settings
-		}
+            query: {
+                presets: ['@babel/preset-react', '@babel/preset-env'], // load the react, es2015 babel setting
+                plugins: ["@babel/plugin-proposal-object-rest-spread"]
+            }
 	    }
 	]
     }
