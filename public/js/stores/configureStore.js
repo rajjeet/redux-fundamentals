@@ -1,5 +1,6 @@
 import {createStore, applyMiddleware} from "redux";
 import logger from 'redux-logger';
+import thunk from 'redux-thunk';
 
 var defaultState = {
     originAmount: 100
@@ -13,6 +14,6 @@ function amount(state = defaultState, action) {
     return state;
 }
 
-var store = createStore(amount, applyMiddleware(logger));
+var store = createStore(amount, applyMiddleware(thunk, logger));
 
 export default store;

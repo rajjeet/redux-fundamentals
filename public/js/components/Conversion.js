@@ -140,6 +140,12 @@ class Conversion extends React.Component {
         // optimistic field updates
         this.props.dispatch({type: 'CHANGE_ORIGIN_AMOUNT', data: {newAmount: newAmount}});
         // this.setState({originAmount: newAmount});
+        this.props.dispatch((dispatch) => {
+            dispatch({type: "SOME_ASYNC_ACTION_STARTED", data: {newAmount: "5000"}});
+            setTimeout(() => {
+                dispatch({type: "SOME_ASYNC_FINISHED_FINISHED", data: {newAmount: "5000"}})
+            }, 3000)
+        });
 
         // get the new dest amount
         this.makeConversionAjaxCall({
