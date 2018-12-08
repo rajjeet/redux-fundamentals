@@ -82,18 +82,26 @@ class Conversion extends React.Component {
                 });
 
                 // get the new fee & total amount
-                this.makeFeeAjaxCall({
+                // this.makeFeeAjaxCall({
+                //     originAmount: resp.originAmount,
+                //     originCurrency: this.state.originCurrency,
+                //     destCurrency: this.state.destinationCurrency
+                //
+                // }, (response) => {
+                //     this.setState({
+                //         feeAmount: response.feeAmount
+                //     })
+                //
+                //     this.calcNewTotal();
+                // }, this.handleAjaxFailure);
+                const feePayload = {
                     originAmount: resp.originAmount,
                     originCurrency: this.state.originCurrency,
                     destCurrency: this.state.destinationCurrency
 
-                }, (response) => {
-                    this.setState({
-                        feeAmount: response.feeAmount
-                    })
+                };
 
-                    this.calcNewTotal();
-                }, this.handleAjaxFailure);
+                this.props.dispatch(actions.fetchFees(feePayload));
             });
 
 
