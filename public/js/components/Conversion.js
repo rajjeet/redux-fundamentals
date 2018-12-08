@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types'
 import axios from 'axios';
 import debounce from 'lodash.debounce';
-import store from '../stores/configureStore';
+import {connect} from 'react-redux';
 
 class FeesTable extends React.Component {
     render() {
@@ -63,8 +63,8 @@ class Conversion extends React.Component {
     componentDidMount() {
         // Add a debounced version of _getDestinationAmount() so we avoid server & UI Thrashing.
         // See http://stackoverflow.com/questions/23123138/perform-debounce-in-react-js/28046731#28046731
-        this.makeConversionAjaxCall = debounce(this._makeConversionAjaxCall, 350);
-        this.makeFeeAjaxCall = debounce(this._makeFeeAjaxCall, 350);
+        this.makeConversionAjaxCall = debounce(this._makeConversionAjaxCall, 300);
+        this.makeFeeAjaxCall = debounce(this._makeFeeAjaxCall, 300);
 
         this.originAmountInput.focus();
     }
@@ -138,7 +138,7 @@ class Conversion extends React.Component {
         newAmount = newAmount.replace(',','')
 
         // optimistic field updates
-        store.dispatch({type: 'CHANGE_ORIGIN_AMOUNT', data: {newAmount: newAmount}});
+        this.props.dispatch({type: 'CHANGE_ORIGIN_AMOUNT', data: {newAmount: newAmount}});
         // this.setState({originAmount: newAmount});
 
         // get the new dest amount
@@ -253,7 +253,6 @@ class Conversion extends React.Component {
     }
 
     render() {
-        console.log(`Origin amount: ${this.props.originAmount}`);
         if (this.state.errorMsg) {
             var errorMsg = <div className="errorMsg">{this.state.errorMsg}</div>
         }
@@ -290,4 +289,10 @@ class Conversion extends React.Component {
     }
 }
 
-export default Conversion;
+const mapStateToProps = (state, props) => {
+    return {
+        originAmount: state.originAmount
+    };
+};
+
+export default connect(mapStateToProps)(Conversion);

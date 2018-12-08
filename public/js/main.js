@@ -5,16 +5,11 @@ import store from './stores/configureStore';
 import Conversion from './components/Conversion.js';
 
 class MainComponent extends React.Component {
-    componentDidMount() {
-        store.subscribe(() => {
-            this.setState({});
-        });
-    }
 
     render() {
         return (
             <div>
-                <Conversion originAmount={store.getState().originAmount}/>
+                <Conversion />
             </div>
         )
     }
