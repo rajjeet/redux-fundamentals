@@ -32,7 +32,7 @@ class Conversion extends React.Component {
         // See http://stackoverflow.com/questions/23123138/perform-debounce-in-react-js/28046731#28046731
         // this.makeConversionAjaxCall = debounce(this._makeConversionAjaxCall, 300);
         this.makeFeeAjaxCall = debounce(this._makeFeeAjaxCall, 300);
-
+        this.makeConversionAjaxCall = debounce(this._makeConversionAjaxCall, 300);
         this.originAmountInput.focus();
     }
 
@@ -182,6 +182,35 @@ class Conversion extends React.Component {
 
     // this is debounced in `componentDidMount()` as this.makeConversionAjaxCall()
     // this is debounced in `componentDidMount()`
+    _makeConversionAjaxCall(data, successCallback, failureCallback) {
+        var originCurrency = this.state.originCurrency;
+        var destCurrency = this.state.destinationCurrency;
+
+        var payload = {
+            originAmount: data.newValue || this.props.originAmount,
+            destAmount: data.newValue || this.state.destAmount,
+            originCurrency: originCurrency,
+            destCurrency: destCurrency,
+            calcOriginAmount: false
+        }
+
+        // determine whether we need to calc origin or dest amount
+        if (data.currentlyEditing === 'dest') {
+            payload.calcOriginAmount = true
+        }
+
+        // ajax call for destination amount
+        // originCurrency, destCurrency, originAmount
+        axios.get('/api/conversion', {
+            params: payload
+        })
+            .then((resp) => {
+                successCallback(resp.data);
+            })
+            .catch(failureCallback);
+
+    }
+    // this is debounced in `componentDidMount()`
     _makeFeeAjaxCall(payload, successCallback, failureCallback) {
         axios.get('/api/fees', {
             params: payload
@@ -191,10 +220,9 @@ class Conversion extends React.Component {
             })
             .catch(failureCallback);
     }
-
     calcNewTotal() {
         var newTotal = parseFloat(this.props.originAmount, 10) + parseFloat(this.state.feeAmount, 10);
-        this.setState({totalCost: parseFloat(newTotal)});
+        this.setState({ totalCost: parseFloat(newTotal) });
     }
 
     render() {
