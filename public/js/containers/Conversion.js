@@ -30,11 +30,12 @@ class Conversion extends React.Component {
     componentDidMount() {
         // Add a debounced version of _getDestinationAmount() so we avoid server & UI Thrashing.
         // See http://stackoverflow.com/questions/23123138/perform-debounce-in-react-js/28046731#28046731
-        this.makeConversionAjaxCall = debounce(this._makeConversionAjaxCall, 300);
+        // this.makeConversionAjaxCall = debounce(this._makeConversionAjaxCall, 300);
         this.makeFeeAjaxCall = debounce(this._makeFeeAjaxCall, 300);
 
         this.originAmountInput.focus();
     }
+
     // we'll handle all failures the same
     handleAjaxFailure(resp) {
         var msg = 'Error. Please try again later.'
@@ -47,6 +48,7 @@ class Conversion extends React.Component {
             errorMsg: msg
         })
     }
+
     // on success ensure no error message
     clearErrorMessage() {
         if (this.state.errorMsg) {
@@ -55,6 +57,7 @@ class Conversion extends React.Component {
             })
         }
     }
+
     handleCurrencyChange(currentlyEditing, event) {
         var obj = {};
         if (currentlyEditing === 'origin') {
@@ -98,35 +101,34 @@ class Conversion extends React.Component {
 
 
     }
+
     handleOriginAmountChange(event) {
         var newAmount = event.target.value;
 
         // remove unallowed chars
-        newAmount = newAmount.replace(',','')
+        newAmount = newAmount.replace(',', '')
 
         // optimistic field updates
         this.props.dispatch(actions.changeOriginAmount(newAmount));
 
-        this.props.dispatch((dispatch) => {
-            var payload = {
-                currentlyEditing: 'origin',
-                newValue: newAmount
-            };
+        // var payload = {
+        //     currentlyEditing: 'origin',
+        //     newValue: newAmount
+        // };
 
-            dispatch({type: "REQUEST_CONVERSION_RATE", data: payload});
+        var payload = {
+            originAmount: newAmount,
+            originCurrency: this.state.originCurrency,
+            destCurrency: this.state.destinationCurrency,
+            calcOriginAmount: false
+        };
 
-            // get the new dest amount
-            this.makeConversionAjaxCall(payload, (resp) => {
-                this.clearErrorMessage();
+        // determine whether we need to calc origin or dest amount
+        // if (data.currentlyEditing === 'dest') {
+        //     payload.calcOriginAmount = true
+        // }
 
-                dispatch({type: "RECEIVED_CONVERSION_RATE", data: resp});
-
-                // this.setState({
-                //     conversionRate: resp.xRate,
-                //     destinationAmount: resp.destAmount
-                // })
-            }, this.handleAjaxFailure);
-        });
+        this.props.dispatch(actions.fetchConversionRate(payload));
 
         // get the new fee & total amount
         this.makeFeeAjaxCall({
@@ -134,7 +136,7 @@ class Conversion extends React.Component {
             originCurrency: this.state.originCurrency,
             destCurrency: this.state.destinationCurrency
 
-        }, (resp) => {
+         }, (resp) => {
             this.setState({
                 feeAmount: resp.feeAmount
             })
@@ -144,11 +146,12 @@ class Conversion extends React.Component {
 
 
     }
+
     handleDestAmountChange(event) {
         var newAmount = event.target.value;
 
         // remove unallowed chars
-        newAmount = newAmount.replace(',','')
+        newAmount = newAmount.replace(',', '')
         // optimistic update
         this.setState({destinationAmount: newAmount})
 
@@ -181,48 +184,22 @@ class Conversion extends React.Component {
         })
 
     }
+
     // this is debounced in `componentDidMount()` as this.makeConversionAjaxCall()
-    _makeConversionAjaxCall(data, successCallback, failureCallback) {
-        var originCurrency = this.state.originCurrency;
-        var destCurrency = this.state.destinationCurrency;
-
-        var payload = {
-            originAmount: data.newValue || this.props.originAmount,
-            destAmount: data.newValue || this.state.destAmount,
-            originCurrency: originCurrency,
-            destCurrency: destCurrency,
-            calcOriginAmount: false
-        }
-
-        // determine whether we need to calc origin or dest amount
-        if (data.currentlyEditing === 'dest') {
-            payload.calcOriginAmount = true
-        }
-
-        // ajax call for destination amount
-        // originCurrency, destCurrency, originAmount
-        axios.get('/api/conversion', {
-            params: payload
-        })
-        .then((resp) => {
-            successCallback(resp.data);
-        })
-        .catch(failureCallback);
-
-    }
     // this is debounced in `componentDidMount()`
     _makeFeeAjaxCall(payload, successCallback, failureCallback) {
         axios.get('/api/fees', {
             params: payload
         })
-        .then((resp) => {
-            successCallback(resp.data);
-        })
-        .catch(failureCallback);
+            .then((resp) => {
+                successCallback(resp.data);
+            })
+            .catch(failureCallback);
     }
+
     calcNewTotal() {
         var newTotal = parseFloat(this.props.originAmount, 10) + parseFloat(this.state.feeAmount, 10);
-        this.setState({ totalCost: parseFloat(newTotal) });
+        this.setState({totalCost: parseFloat(newTotal)});
     }
 
     render() {
@@ -235,13 +212,15 @@ class Conversion extends React.Component {
             <div>
                 {errorMsg}
                 <label>Convert</label>&nbsp;
-                <input className="amount-field" ref={input => this.originAmountInput = input} onChange={this.handleOriginAmountChange} value={this.props.originAmount} />
+                <input className="amount-field" ref={input => this.originAmountInput = input}
+                       onChange={this.handleOriginAmountChange} value={this.props.originAmount}/>
                 <select value={this.state.originCurrency} onChange={this.handleOriginCurrencyChange}>
                     <option value="USD">USD</option>
                     <option value="EUR">EUR</option>
                     <option value="JPY">JPY</option>
                 </select>
-                to <input className="amount-field" onChange={this.handleDestAmountChange} value={this.props.destinationAmount} />&nbsp;
+                to <input className="amount-field" onChange={this.handleDestAmountChange}
+                          value={this.props.destinationAmount}/>&nbsp;
                 <select value={this.state.destinationCurrency} onChange={this.handleDestCurrencyChange}>
                     <option value="USD">USD</option>
                     <option value="EUR">EUR</option>
