@@ -8,78 +8,24 @@ import * as actions from '../actions/actions';
 class Conversion extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            // originAmount: '0.00',
-            // originCurrency: 'USD',
-            // destinationAmount: '0.00',
-            // destinationCurrency: 'EUR',
-            // feeAmount: 0.00,
-            // conversionRate: 1.5,
-            // totalCost: 0.00,
-            // errorMsg: ''
-        }
 
-        // bind event listeners so 'this' will be available in the handlers
         this.handleOriginAmountChange = this.handleOriginAmountChange.bind(this);
         this.handleDestAmountChange = this.handleDestAmountChange.bind(this);
         this.handleOriginCurrencyChange = this.handleOriginCurrencyChange.bind(this);
         this.handleDestCurrencyChange = this.handleDestCurrencyChange.bind(this);
-        // this.handleAjaxFailure = this.handleAjaxFailure.bind(this);
     }
 
     componentDidMount() {
-        // Add a debounced version of _getDestinationAmount() so we avoid server & UI Thrashing.
-        // See http://stackoverflow.com/questions/23123138/perform-debounce-in-react-js/28046731#28046731
-        // this.makeConversionAjaxCall = debounce(this._makeConversionAjaxCall, 300);
-        this.makeConversionAjaxCall = debounce(this._makeConversionAjaxCall, 300);
         this.originAmountInput.focus();
     }
 
-    handleCurrencyChange(currentlyEditing, event) {
-        var obj = {};
-        if (currentlyEditing === 'origin') {
-            obj.originCurrency = event.target.value
-        } else {
-            obj.destinationCurrency = event.target.value
-        }
-
-        // just change both...
-        // we have to use the callback so `this.state` will reflect the proper values
-        // when they are called in _makeConversionAjaxCall()
-        this.setState(obj, () => {
-            // get new dest amount & conversion rates
-            this.makeConversionAjaxCall({}, (resp) => {
-
-                this.setState({
-                    originAmount: resp.originAmount,
-                    // destinationAmount: resp.destAmount,
-                    destinationAmount: this.props.destinationAmount,
-                    conversionRate: resp.xRate
-                });
-
-                const feePayload = {
-                    originAmount: resp.originAmount,
-                    originCurrency: this.props.originCurrency,
-                    destCurrency: this.props.destinationCurrency
-
-                };
-
-                this.props.dispatch(actions.fetchFees(feePayload));
-            });
-
-
-        })
-
-
-    }
-
     handleOriginCurrencyChange(event) {
-        var newCurrency = event.target.value;
+        const newCurrency = event.target.value;
 
         this.props.dispatch(actions.changeOriginCurrency(newCurrency));
 
-        var payload = {
-            originAmount: this.props.originAmount,
+        const payload = {
+             originAmount: this.props.originAmount,
             originCurrency: newCurrency,
             destCurrency: this.props.destinationCurrency,
             calcOriginAmount: false
@@ -97,11 +43,11 @@ class Conversion extends React.Component {
     }
 
     handleDestCurrencyChange(event) {
-        var newCurrency = event.target.value;
+        const newCurrency = event.target.value;
 
         this.props.dispatch(actions.changeDestCurrency(newCurrency));
 
-        var payload = {
+        const payload = {
             originAmount: this.props.originAmount,
             originCurrency: this.props.originCurrency,
             destCurrency: newCurrency,
@@ -120,7 +66,7 @@ class Conversion extends React.Component {
     }
 
     handleOriginAmountChange(event) {
-        var newAmount = event.target.value;
+        let  newAmount = event.target.value;
 
         newAmount = newAmount.replace(',', '');
 
@@ -145,13 +91,13 @@ class Conversion extends React.Component {
     }
 
     handleDestAmountChange(event) {
-        var newAmount = event.target.value;
+        let newAmount = event.target.value;
 
         newAmount = newAmount.replace(',', '');
 
         this.props.dispatch(actions.changeDestinationAmount(newAmount));
 
-        var payload = {
+        const payload = {
             originAmount: this.props.originAmount,
             originCurrency: this.props.originCurrency,
             destCurrency: this.props.destinationCurrency,
@@ -163,53 +109,10 @@ class Conversion extends React.Component {
 
     }
 
-    // this is debounced in `componentDidMount()` as this.makeConversionAjaxCall()
-    // this is debounced in `componentDidMount()`
-    _makeConversionAjaxCall(data, successCallback, failureCallback) {
-        var originCurrency = this.props.originCurrency;
-        var destCurrency = this.props.destinationCurrency;
-
-        var payload = {
-            originAmount: data.newValue || this.props.originAmount,
-            destAmount: data.newValue || this.state.destAmount,
-            originCurrency: originCurrency,
-            destCurrency: destCurrency,
-            calcOriginAmount: false
-        }
-
-        // determine whether we need to calc origin or dest amount
-        if (data.currentlyEditing === 'dest') {
-            payload.calcOriginAmount = true
-        }
-
-        // ajax call for destination amount
-        // originCurrency, destCurrency, originAmount
-        axios.get('/api/conversion', {
-            params: payload
-        })
-            .then((resp) => {
-                successCallback(resp.data);
-            })
-            .catch(failureCallback);
-
-    }
-
-    // this is debounced in `componentDidMount()`
-    _makeFeeAjaxCall(payload, successCallback, failureCallback) {
-        axios.get('/api/fees', {
-            params: payload
-        })
-            .then((resp) => {
-                successCallback(resp.data);
-            })
-            .catch(failureCallback);
-    }
-
     render() {
         if (this.props.errorMsg) {
-            var errorMsg = <div className="errorMsg">{this.props.errorMsg}</div>
+            const errorMsg = <div className="errorMsg">{this.props.errorMsg}</div>
         }
-
 
         return (
             <div>
