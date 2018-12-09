@@ -2,11 +2,12 @@ import {ActionTypes} from "../actions/actionTypes";
 
 let defaultState = {
     originAmount: '100',
-    destinationAmount: '0.00',
-    conversionRate: 1,
+    destinationAmount: '94',
+    conversionRate: 0.94,
     feeAmount: 0.00,
     totalCost: 0.00,
-    originCurrency: 'USD'
+    originCurrency: 'USD',
+    destinationCurrency: 'EUR'
 };
 
 export function amount(state = defaultState, action) {
@@ -18,11 +19,18 @@ export function amount(state = defaultState, action) {
         case (ActionTypes.CHANGE_ORIGIN_CURRENCY):
             return {...state, originCurrency: action.data.newCurrency};
 
+        case (ActionTypes.CHANGE_DEST_CURRENCY):
+            return {...state, destinationCurrency: action.data.newCurrency};
+
+        case (ActionTypes.CHANGE_DEST_AMOUNT):
+            return {...state, destinationAmount: action.data.newAmount};
+
         case ('RECEIVED_CONVERSION_RATE_SUCCESS'):
             return {
                 ...state,
                 conversionRate: action.data.xRate,
-                destinationAmount: action.data.destAmount
+                destinationAmount: action.data.destAmount,
+                originAmount: action.data.originAmount
             };
 
         case ('RECEIVED_FEES_SUCCESS'):

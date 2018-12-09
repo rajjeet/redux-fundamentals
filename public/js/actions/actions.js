@@ -9,9 +9,23 @@ export function changeOriginCurrency(newCurrency) {
     };
 }
 
+export function changeDestCurrency(newCurrency) {
+    return {
+        type: ActionTypes.CHANGE_DEST_CURRENCY,
+        data: {newCurrency: newCurrency}
+    };
+}
+
 export function changeOriginAmount(newAmount) {
     return {
         type: ActionTypes.CHANGE_ORIGIN_AMOUNT,
+        data: {newAmount: newAmount}
+    };
+}
+
+export function changeDestinationAmount(newAmount) {
+    return {
+        type: ActionTypes.CHANGE_DEST_AMOUNT,
         data: {newAmount: newAmount}
     };
 }
