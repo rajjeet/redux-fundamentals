@@ -13,10 +13,10 @@ class Conversion extends React.Component {
             // originCurrency: 'USD',
             // destinationAmount: '0.00',
             // destinationCurrency: 'EUR',
-            feeAmount: 0.00,
+            // feeAmount: 0.00,
             // conversionRate: 1.5,
-            totalCost: 0.00,
-            errorMsg: ''
+            // totalCost: 0.00,
+            // errorMsg: ''
         }
 
         // bind event listeners so 'this' will be available in the handlers
@@ -24,7 +24,7 @@ class Conversion extends React.Component {
         this.handleDestAmountChange = this.handleDestAmountChange.bind(this);
         this.handleOriginCurrencyChange = this.handleOriginCurrencyChange.bind(this);
         this.handleDestCurrencyChange = this.handleDestCurrencyChange.bind(this);
-        this.handleAjaxFailure = this.handleAjaxFailure.bind(this);
+        // this.handleAjaxFailure = this.handleAjaxFailure.bind(this);
     }
 
     componentDidMount() {
@@ -33,28 +33,6 @@ class Conversion extends React.Component {
         // this.makeConversionAjaxCall = debounce(this._makeConversionAjaxCall, 300);
         this.makeConversionAjaxCall = debounce(this._makeConversionAjaxCall, 300);
         this.originAmountInput.focus();
-    }
-
-    // we'll handle all failures the same
-    handleAjaxFailure(resp) {
-        var msg = 'Error. Please try again later.'
-
-        if (resp && resp.request && resp.request.status === 0) {
-            msg = 'Oh no! App appears to be offline.'
-        }
-
-        this.setState({
-            errorMsg: msg
-        })
-    }
-
-    // on success ensure no error message
-    clearErrorMessage() {
-        if (this.state.errorMsg) {
-            this.setState({
-                errorMsg: ''
-            })
-        }
     }
 
     handleCurrencyChange(currentlyEditing, event) {
@@ -71,7 +49,6 @@ class Conversion extends React.Component {
         this.setState(obj, () => {
             // get new dest amount & conversion rates
             this.makeConversionAjaxCall({}, (resp) => {
-                this.clearErrorMessage();
 
                 this.setState({
                     originAmount: resp.originAmount,
@@ -96,7 +73,7 @@ class Conversion extends React.Component {
 
     }
 
-    handleOriginCurrencyChange(event){
+    handleOriginCurrencyChange(event) {
         var newCurrency = event.target.value;
 
         this.props.dispatch(actions.changeOriginCurrency(newCurrency));
@@ -119,7 +96,7 @@ class Conversion extends React.Component {
         this.props.dispatch(actions.fetchFees(feePayload));
     }
 
-    handleDestCurrencyChange(event){
+    handleDestCurrencyChange(event) {
         var newCurrency = event.target.value;
 
         this.props.dispatch(actions.changeDestCurrency(newCurrency));
@@ -216,6 +193,7 @@ class Conversion extends React.Component {
             .catch(failureCallback);
 
     }
+
     // this is debounced in `componentDidMount()`
     _makeFeeAjaxCall(payload, successCallback, failureCallback) {
         axios.get('/api/fees', {
@@ -228,8 +206,8 @@ class Conversion extends React.Component {
     }
 
     render() {
-        if (this.state.errorMsg) {
-            var errorMsg = <div className="errorMsg">{this.state.errorMsg}</div>
+        if (this.props.errorMsg) {
+            var errorMsg = <div className="errorMsg">{this.props.errorMsg}</div>
         }
 
 
@@ -267,7 +245,7 @@ class Conversion extends React.Component {
 }
 
 const mapStateToProps = (state, props) => {
-    const {amount} = state;
+    const {amount, error} = state;
     return {
         originAmount: amount.originAmount,
         originCurrency: amount.originCurrency,
@@ -276,6 +254,7 @@ const mapStateToProps = (state, props) => {
         conversionRate: amount.conversionRate,
         feeAmount: amount.feeAmount,
         totalCost: amount.totalCost,
+        errorMsg: error.errorMsg,
     };
 };
 
