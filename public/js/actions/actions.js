@@ -2,6 +2,13 @@ import axios from "axios";
 import debounce from 'lodash.debounce';
 import {ActionTypes} from './actionTypes';
 
+export function changeOriginCurrency(newCurrency) {
+    return {
+        type: ActionTypes.CHANGE_ORIGIN_CURRENCY,
+        data: {newCurrency: newCurrency}
+    };
+}
+
 export function changeOriginAmount(newAmount) {
     return {
         type: ActionTypes.CHANGE_ORIGIN_AMOUNT,

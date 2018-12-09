@@ -5,19 +5,26 @@ let defaultState = {
     destinationAmount: '0.00',
     conversionRate: 1,
     feeAmount: 0.00,
-    totalCost: 0.00
+    totalCost: 0.00,
+    originCurrency: 'USD'
 };
 
 export function amount(state = defaultState, action) {
     switch (action.type) {
+
         case (ActionTypes.CHANGE_ORIGIN_AMOUNT):
             return {...state, originAmount: action.data.newAmount};
+
+        case (ActionTypes.CHANGE_ORIGIN_CURRENCY):
+            return {...state, originCurrency: action.data.newCurrency};
+
         case ('RECEIVED_CONVERSION_RATE_SUCCESS'):
             return {
                 ...state,
                 conversionRate: action.data.xRate,
                 destinationAmount: action.data.destAmount
             };
+
         case ('RECEIVED_FEES_SUCCESS'):
             const newTotal = parseFloat(state.originAmount) + parseFloat(action.data.feeAmount);
 
@@ -26,6 +33,7 @@ export function amount(state = defaultState, action) {
                 feeAmount: action.data.feeAmount,
                 totalCost: newTotal
             };
+
         default:
             return state;
     }
