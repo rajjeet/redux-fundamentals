@@ -1,12 +1,3 @@
-var defaultState = 0;
-
-function sampleReducerFunc(state = defaultState, action) {
-    if (action.type === 'INCREMENT') {
-        return state + 1;
-    }
-    return state;
-}
-
 function createStore(reducer) {
     var state;
     var subscriptions = [];
@@ -31,6 +22,15 @@ function createStore(reducer) {
     };
     obj.dispatch({type: 'REDUX_INIT'});
     return obj;
+}
+
+var defaultState = 0;
+
+function sampleReducerFunc(state = defaultState, action) {
+    if (action.type === 'INCREMENT') {
+        return state + 1;
+    }
+    return state;
 }
 
 var store = createStore(sampleReducerFunc);
