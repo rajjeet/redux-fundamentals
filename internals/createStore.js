@@ -18,6 +18,7 @@ function createStore(reducer) {
             subscriptions.forEach(function (fn) {
                 fn();
             });
+            return action;
         }
     };
     obj.dispatch({type: 'REDUX_INIT'});

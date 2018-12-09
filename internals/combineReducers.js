@@ -18,11 +18,19 @@ function createStore(reducer) {
             subscriptions.forEach(function (fn) {
                 fn();
             });
+            return action;
         }
     };
     obj.dispatch({type: 'REDUX_INIT'});
     return obj;
 }
+
+const rootReducer = combineReducers({
+    increment: incrementReducer,
+    decrement: decrementReducer
+});
+
+// Implementation
 
 let defaultState = 0;
 
@@ -39,11 +47,6 @@ function decrementReducer(state = defaultState, action) {
     }
     return state;
 }
-
-const rootReducer = combineReducers({
-    increment: incrementReducer,
-    decrement: decrementReducer
-});
 
 function combineReducers(stateTree){
     let keys = Object.keys(stateTree);
