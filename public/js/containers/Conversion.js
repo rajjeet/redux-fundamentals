@@ -31,7 +31,6 @@ class Conversion extends React.Component {
         // Add a debounced version of _getDestinationAmount() so we avoid server & UI Thrashing.
         // See http://stackoverflow.com/questions/23123138/perform-debounce-in-react-js/28046731#28046731
         // this.makeConversionAjaxCall = debounce(this._makeConversionAjaxCall, 300);
-        this.makeFeeAjaxCall = debounce(this._makeFeeAjaxCall, 300);
         this.makeConversionAjaxCall = debounce(this._makeConversionAjaxCall, 300);
         this.originAmountInput.focus();
     }
@@ -183,54 +182,9 @@ class Conversion extends React.Component {
             calcOriginAmount: true
         };
 
-        this.props.dispatch(actions.fetchConversionRate(payload));
+        this.props.dispatch(actions.fetchConversionRateAndFees(payload));
 
-        let feePayload = {
-            originAmount: this.props.originAmount,
-            originCurrency: this.props.originCurrency,
-            destCurrency: this.props.destinationCurrency
-        };
-
-        this.props.dispatch(actions.fetchFees(feePayload));
     }
-
-    // handleDestAmountChange(event) {
-    //     var newAmount = event.target.value;
-    //
-    //     // remove unallowed chars
-    //     newAmount = newAmount.replace(',', '')
-    //     // optimistic update
-    //     this.setState({destinationAmount: newAmount})
-    //
-    //     this.makeConversionAjaxCall({
-    //         currentlyEditing: 'dest',
-    //         newValue: newAmount
-    //
-    //     }, (resp) => {
-    //         // make ajax call to get the fee amount..
-    //         var newState = {
-    //             conversionRate: resp.xRate,
-    //             originAmount: resp.originAmount
-    //         }
-    //
-    //         this.setState(newState)
-    //
-    //         // get the new fee & total amount
-    //         this.makeFeeAjaxCall({
-    //             originAmount: resp.originAmount,
-    //             originCurrency: this.props.originCurrency,
-    //             destCurrency: this.props.destinationCurrency
-    //
-    //         }, (resp) => {
-    //             this.setState({
-    //                 feeAmount: resp.feeAmount
-    //             })
-    //
-    //             this.calcNewTotal();
-    //         }, this.handleAjaxFailure);
-    //     })
-    //
-    // }
 
     // this is debounced in `componentDidMount()` as this.makeConversionAjaxCall()
     // this is debounced in `componentDidMount()`
@@ -271,10 +225,6 @@ class Conversion extends React.Component {
                 successCallback(resp.data);
             })
             .catch(failureCallback);
-    }
-    calcNewTotal() {
-        var newTotal = parseFloat(this.props.originAmount, 10) + parseFloat(this.state.feeAmount, 10);
-        this.setState({ totalCost: parseFloat(newTotal) });
     }
 
     render() {
